@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Sauti AI</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#050816;
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:700px;
+    background:#0d1328;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+.logo{
+    font-size:42px;
+    font-weight:bold;
+    margin-bottom:10px;
+    color:#5eead4;
+}
+
+.tagline{
+    font-size:18px;
+    color:#a1a1aa;
+    margin-bottom:30px;
+    line-height:1.6;
+}
+
+.card{
+    background:#111827;
+    padding:25px;
+    border-radius:15px;
+    margin-top:20px;
+}
+
+.prompt-title{
+    font-size:14px;
+    color:#5eead4;
+    margin-bottom:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.prompt{
+    font-size:24px;
+    line-height:1.5;
+    margin-bottom:25px;
+}
+
+.controls{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    padding:14px 22px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.record-btn{
+    background:#14b8a6;
+    color:white;
+}
+
+.stop-btn{
+    background:#ef4444;
+    color:white;
+}
+
+button:hover{
+    opacity:0.85;
+}
+
+.status{
+    margin-top:20px;
+    color:#cbd5e1;
+}
+
+audio{
+    width:100%;
+    margin-top:25px;
+}
+
+.footer{
+    margin-top:35px;
+    color:#71717a;
+    font-size:14px;
+    text-align:center;
+}
+
+@media(max-width:600px){
+
+    .logo{
+        font-size:32px;
+    }
+
+    .prompt{
+        font-size:20px;
+    }
+
+    .container{
+        padding:25px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">Sauti AI</div>
+
+    <div class="tagline">
+        Building African-rooted AI voice datasets and intelligence infrastructure.
+    </div>
+
+    <div class="card">
+
+        <div class="prompt-title">
+            Voice Prompt
+        </div>
+
+        <div class="prompt" id="promptText">
+            “Technology is transforming Africa rapidly.”
+        </div>
+
+        <div class="controls">
+
+            <button class="record-btn" id="recordBtn">
+                Start Recording
+            </button>
+
+            <button class="stop-btn" id="stopBtn" disabled>
+                Stop Recording
+            </button>
+
+        </div>
+
+        <div class="status" id="status">
+            Click start recording and read the sentence aloud.
+        </div>
+
+        <audio id="audioPlayback" controls></audio>
+
+    </div>
+
+    <div class="footer">
+        Sauti AI • African AI Infrastructure
+    </div>
+
+</div>
+
+<script>
+
+let mediaRecorder;
+let audioChunks = [];
+
+const recordBtn = document.getElementById("recordBtn");
+const stopBtn = document.getElementById("stopBtn");
+const statusText = document.getElementById("status");
+const audioPlayback = document.getElementById("audioPlayback");
+
+recordBtn.addEventListener("click", async () => {
+
+    try{
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio:true
+        });
+
+        mediaRecorder = new MediaRecorder(stream);
+
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+
+            const audioBlob = new Blob(audioChunks,{
+                type:"audio/webm"
+            });
+
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+            audioPlayback.src = audioUrl;
+
+            statusText.innerHTML =
+                "Recording completed successfully.";
+
+            // Auto download recording
+
+            const downloadLink = document.createElement("a");
+
+            downloadLink.href = audioUrl;
+
+            downloadLink.download = "sauti-recording.webm";
+
+            downloadLink.click();
+
+        };
+
+        mediaRecorder.start();
+
+        statusText.innerHTML =
+            "Recording in progress... Speak clearly.";
+
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+
+    }
+
+    catch(error){
+
+        statusText.innerHTML =
+            "Microphone access denied.";
+
+        console.error(error);
+
+    }
+
+});
+
+stopBtn.addEventListener("click", () => {
+
+    mediaRecorder.stop();
+
+    recordBtn.disabled = false;
+    stopBtn.disabled = true;
+
+});
+
+</script>
+
+</body>
+</html>
