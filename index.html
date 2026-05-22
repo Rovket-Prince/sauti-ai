@@ -183,7 +183,7 @@ audio{
 </div>
 
 <script>
-    const supabase = supabase.createClient(
+    const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
@@ -226,7 +226,7 @@ recordBtn.addEventListener("click", async () => {
         "Uploading recording...";
 
     const { data, error } =
-        await supabase.storage
+        await supabaseClient.storage
         .from("recordings")
         .upload(fileName, audioBlob);
 
@@ -241,7 +241,7 @@ recordBtn.addEventListener("click", async () => {
     }
 
     const { data: publicUrlData } =
-        supabase.storage
+        supabaseClient.storage
         .from("recordings")
         .getPublicUrl(fileName);
 
