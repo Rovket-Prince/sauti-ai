@@ -236,7 +236,7 @@ recordBtn.addEventListener("click", async () => {
 
                 const { error } =
                     await supabaseClient.storage
-                    .from("recordings")
+                    .from("Recordings")
                     .upload(fileName, audioBlob);
 
                 if(error){
