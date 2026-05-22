@@ -133,6 +133,7 @@ audio{
 }
 
 </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
@@ -182,6 +183,10 @@ audio{
 </div>
 
 <script>
+    const supabase = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 const SUPABASE_URL = "https://mpgdfrqgpzautjcnpkmn.supabase.co/rest/v1/";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wZ2RmcnFncHphdXRqY25wa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NTQ1OTksImV4cCI6MjA5NTAzMDU5OX0.uklNz9K-qDZPozsUKMy9c7LBXveGPQVNUP3jO2yAzyw";
 let mediaRecorder;
@@ -208,30 +213,44 @@ recordBtn.addEventListener("click", async () => {
             audioChunks.push(event.data);
         };
 
-        mediaRecorder.onstop = () => {
+       mediaRecorder.onstop = async () => {
 
-            const audioBlob = new Blob(audioChunks,{
-                type:"audio/webm"
-            });
+    const audioBlob = new Blob(audioChunks,{
+        type:"audio/webm"
+    });
 
-            const audioUrl = URL.createObjectURL(audioBlob);
+    const fileName =
+        `recording-${Date.now()}.webm`;
 
-            audioPlayback.src = audioUrl;
+    statusText.innerHTML =
+        "Uploading recording...";
 
-            statusText.innerHTML =
-                "Recording completed successfully.";
+    const { data, error } =
+        await supabase.storage
+        .from("recordings")
+        .upload(fileName, audioBlob);
 
-            // Auto download recording
+    if(error){
 
-            const downloadLink = document.createElement("a");
+        console.error(error);
 
-            downloadLink.href = audioUrl;
+        statusText.innerHTML =
+            "Upload failed.";
 
-            downloadLink.download = "sauti-recording.webm";
+        return;
+    }
 
-            downloadLink.click();
+    const { data: publicUrlData } =
+        supabase.storage
+        .from("recordings")
+        .getPublicUrl(fileName);
 
-        };
+    audioPlayback.src =
+        publicUrlData.publicUrl;
+
+    statusText.innerHTML =
+        "Recording uploaded successfully.";
+};
 
         mediaRecorder.start();
 
