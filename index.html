@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Sauti-AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
@@ -133,7 +136,7 @@ audio{
 }
 
 </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 </head>
 
 <body>
@@ -152,7 +155,7 @@ audio{
             Voice Prompt
         </div>
 
-        <div class="prompt" id="promptText">
+        <div class="prompt">
             “Technology is transforming Africa rapidly.”
         </div>
 
@@ -183,12 +186,16 @@ audio{
 </div>
 
 <script>
-    const supabaseClient = window.supabase.createClient(
+
+const SUPABASE_URL = "https://mpgdfrqgpzautjcnpkmn.supabase.co";
+
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
+
+const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
-const SUPABASE_URL = "https://mpgdfrqgpzautjcnpkmn.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wZ2RmcnFncHphdXRqY25wa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NTQ1OTksImV4cCI6MjA5NTAzMDU5OX0.uklNz9K-qDZPozsUKMy9c7LBXveGPQVNUP3jO2yAzyw";
+
 let mediaRecorder;
 let audioChunks = [];
 
@@ -213,44 +220,57 @@ recordBtn.addEventListener("click", async () => {
             audioChunks.push(event.data);
         };
 
-       mediaRecorder.onstop = async () => {
+        mediaRecorder.onstop = async () => {
 
-    const audioBlob = new Blob(audioChunks,{
-        type:"audio/webm"
-    });
+            try{
 
-    const fileName =
-        `recording-${Date.now()}.webm`;
+                const audioBlob = new Blob(audioChunks,{
+                    type:"audio/webm"
+                });
 
-    statusText.innerHTML =
-        "Uploading recording...";
+                const fileName =
+                    `recording-${Date.now()}.webm`;
 
-    const { data, error } =
-        await supabaseClient.storage
-        .from("recordings")
-        .upload(fileName, audioBlob);
+                statusText.innerHTML =
+                    "Uploading recording...";
 
-    if(error){
+                const { error } =
+                    await supabaseClient.storage
+                    .from("recordings")
+                    .upload(fileName, audioBlob);
 
-        console.error(error);
+                if(error){
 
-        statusText.innerHTML =
-            "Upload failed.";
+                    console.error(error);
 
-        return;
-    }
+                    statusText.innerHTML =
+                        "Upload failed.";
 
-    const { data: publicUrlData } =
-        supabaseClient.storage
-        .from("recordings")
-        .getPublicUrl(fileName);
+                    return;
+                }
 
-    audioPlayback.src =
-        publicUrlData.publicUrl;
+                const { data } =
+                    supabaseClient.storage
+                    .from("recordings")
+                    .getPublicUrl(fileName);
 
-    statusText.innerHTML =
-        "Recording uploaded successfully.";
-};
+                audioPlayback.src = data.publicUrl;
+
+                statusText.innerHTML =
+                    "Recording uploaded successfully.";
+
+            }
+
+            catch(uploadError){
+
+                console.error(uploadError);
+
+                statusText.innerHTML =
+                    "Upload error occurred.";
+
+            }
+
+        };
 
         mediaRecorder.start();
 
@@ -264,10 +284,10 @@ recordBtn.addEventListener("click", async () => {
 
     catch(error){
 
-        statusText.innerHTML =
-            "Microphone access denied.";
-
         console.error(error);
+
+        statusText.innerHTML =
+            "Microphone access denied or unavailable.";
 
     }
 
