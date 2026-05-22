@@ -239,15 +239,15 @@ recordBtn.addEventListener("click", async () => {
                     .from("Recordings")
                     .upload(fileName, audioBlob);
 
-                if(error){
+               if(error){
 
-                    console.error(error);
+    console.error(error);
 
-                    statusText.innerHTML =
-                        "Upload failed.";
+    statusText.innerHTML =
+        "Upload failed: " + error.message;
 
-                    return;
-                }
+    return;
+}
 
                 const { data } =
                     supabaseClient.storage
