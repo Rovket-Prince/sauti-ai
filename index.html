@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sauti-AI | Empowering African Voices</title>
+    <!-- FontAwesome for clean icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -488,14 +489,17 @@
 </head>
 <body>
 
+    <!-- Shared Navigation Bar -->
     <nav class="navbar">
         <div class="logo" id="nav-logo">sauti<span>.ai</span></div>
         <ul class="nav-links">
             <li><a href="#" id="link-landing">Data Drive</a></li>
+            <!-- Requested Transition Hook on this button -->
             <li><a href="#" id="link-proto-btn" class="btn btn-secondary">Test Prototype</a></li>
         </ul>
     </nav>
 
+    <!-- VIEW 1: LANDING PAGE & COLLECTION DRIVE -->
     <div id="view-landing" class="app-view active-view">
         <header class="hero">
             <div class="hero-container">
@@ -505,7 +509,8 @@
                     <p>Every accent tells a story. Contribute your unique voice today to train an AI that truly understands, speaks, and represents our diverse linguistic heritage.</p>
                     <div class="hero-actions">
                         <a href="#record-section" class="btn btn-primary"><i class="fa-solid fa-microphone"></i> Contribute Your Voice</a>
-                        <button id="hero-to-proto" class="btn btn-outline">Try Interactive AI</button>
+                        <!-- Requested Transition Hook on this button too -->
+                        <button id="hero-to-proto" class="btn btn-outline">Test Prototype</button>
                     </div>
                 </div>
                 <div class="hero-visual">
@@ -535,7 +540,7 @@
                 <div class="step-card">
                     <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                     <h3>3. Secure Submit</h3>
-                    <p>Your data seamlessly redirects to test our conversational voice replies.</p>
+                    <p>Your data is safely uploaded. Feel free to switch tabs to test our prototype model responses.</p>
                 </div>
             </div>
         </section>
@@ -577,12 +582,14 @@
         </section>
     </div>
 
+    <!-- VIEW 2: INTERACTIVE PROTOTYPE TEST PAGE -->
     <div id="view-prototype" class="app-view">
         <div class="proto-wrapper">
             <div class="proto-layout">
                 
+                <!-- Left Interaction Panel with Centralized Circle Record Button -->
                 <div class="proto-left-panel">
-                    <h2>Test Prototype</h2>
+                    <h2>Interactive AI</h2>
                     <p>Speak to Sauti-AI naturally. The conversational engine will respond using a natural native accent model.</p>
                     
                     <select class="prototype-select" id="proto-accent-select">
@@ -605,6 +612,7 @@
                     </div>
                 </div>
 
+                <!-- Right Live Text Chat Mirror Panel -->
                 <div class="proto-right-panel">
                     <div class="chat-header"><span></span> Sauti-AI Audio Context logs</div>
                     <div class="chat-output-area" id="chat-box">
@@ -616,10 +624,12 @@
         </div>
     </div>
 
+    <!-- Shared Footer -->
     <footer>
         <p>&copy; 2026 Sauti-AI. Built for scaling African speech datasets.</p>
     </footer>
 
+    <!-- INTERACTIVE SPA ROUTING & CORE SCRIPTS -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // View Navigation Selectors
@@ -644,11 +654,13 @@
                 }
             }
 
-            // Route Triggers
-            linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
-            navLogo.addEventListener('click', () => switchView('landing'));
+            // Route Triggers via the Explicit "Test Prototype" buttons
             linkProtoBtn.addEventListener('click', (e) => { e.preventDefault(); switchView('prototype'); });
             heroToProto.addEventListener('click', () => switchView('prototype'));
+            
+            // Standard back navigation links
+            linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
+            navLogo.addEventListener('click', () => switchView('landing'));
 
             // --- DESIGN 1 JS: VOICE COLLECTION DRIVE LOOP ---
             const recordBtn = document.getElementById('main-record-btn');
@@ -681,18 +693,15 @@
                     statusText.textContent = "Uploading to Sauti dataset storage...";
                     waveVisualizer.classList.remove('active');
 
-                    // Sauti Hook Strategy: Successful collection triggers a redirect to test the live prototype!
+                    // Clean dashboard confirmation message without changing pages automatically
                     setTimeout(() => {
                         statusText.style.color = "var(--primary-neon)";
-                        statusText.textContent = "Uploaded! Redirecting you to test our AI reply model...";
+                        statusText.textContent = "Successfully uploaded! Thank you for contributing.";
                         
                         setTimeout(() => {
-                            // Automatically route user to page 2 prototype
-                            switchView('prototype');
-                            // Reset state string silently
                             statusText.style.color = "var(--text-muted)";
-                            statusText.textContent = "Click to start recording";
-                        }, 2000);
+                            statusText.textContent = "Click to start recording another prompt";
+                        }, 4000);
                     }, 1200);
                 }
             });
@@ -720,14 +729,14 @@
                     protoStatusText.textContent = "Thinking...";
                     protoWaveVisualizer.classList.remove('active');
 
-                    // Simulate appending user query to chat log mirror
+                    // Append mock user audio info block
                     const userMessage = document.createElement('div');
                     userMessage.className = "bubble user-msg";
                     userMessage.innerHTML = `🎙️ <em>Audio Input (${accentSelect.value || 'General Accent'})</em>`;
                     chatBox.appendChild(userMessage);
                     chatBox.scrollTop = chatBox.scrollHeight;
 
-                    // Simulated interactive voice-reply engine delay
+                    // Simulated voice-reply processing time frame
                     setTimeout(() => {
                         protoStatusText.textContent = "Tap circle to talk to AI";
                         
