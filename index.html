@@ -17,6 +17,10 @@
             --text-muted: #8F9CAE;
             --transition-fast: all 0.3s ease;
             --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* WhatsApp-inspired Theme Tweaks for Dark Mode */
+            --wa-outbound: #005c4b;
+            --wa-inbound: #202c33;
         }
 
         * {
@@ -358,115 +362,185 @@
             100% { height: 5px; }
         }
 
-        /* DESIGN 2: PROTOTYPE INTERACTIVE PAGE STYLES */
+        /* DESIGN 2: NEW WHATSAPP-STYLE CHAT LAYOUT */
         .proto-wrapper {
             min-height: 100vh;
-            padding-top: 120px;
-            padding-bottom: 6rem;
+            padding-top: 100px;
+            padding-bottom: 2rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-inline: 8%;
+            padding-inline: 5%;
         }
 
-        .proto-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+        .whatsapp-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 750px;
+            height: 780px;
             background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 3.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .proto-left-panel {
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        /* Chat Window Header */
+        .chat-window-header {
+            background: rgba(11, 15, 25, 0.8);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-glow {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-blue));
+            border-radius: 50%;
+            display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding-right: 2rem;
+            color: #000;
+            font-weight: bold;
         }
 
-        .proto-left-panel h2 { font-size: 2.2rem; margin-bottom: 1rem; }
-        .proto-left-panel p { color: var(--text-muted); margin-bottom: 2rem; max-width: 400px; }
+        .profile-status h3 { font-size: 1.05rem; font-weight: 600; }
+        .profile-status p { font-size: 0.8rem; color: var(--primary-neon); display: flex; align-items: center; gap: 0.3rem; }
+        .profile-status p span { width: 6px; height: 6px; background: var(--primary-neon); border-radius: 50%; display: inline-block; box-shadow: 0 0 6px var(--primary-neon); }
 
-        .proto-right-panel {
-            display: flex;
-            flex-direction: column;
-            height: 400px;
-            background: rgba(11, 15, 25, 0.5);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .chat-header {
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary-neon);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .chat-header span {
-            width: 8px;
-            height: 8px;
-            background: var(--primary-neon);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--primary-neon);
-        }
-
-        .chat-output-area {
+        /* Scrollable Message Feed Area */
+        .whatsapp-feed {
             flex-grow: 1;
+            padding: 2rem 1.5rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            padding-right: 0.5rem;
+            gap: 1.2rem;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
+            background-size: 24px 24px;
+            background-color: rgba(11, 15, 25, 0.3);
         }
 
-        /* Chat bubbles */
-        .bubble {
-            max-width: 85%;
-            padding: 1rem;
-            border-radius: 12px;
+        /* Clean Message Bubble Hierarchies */
+        .wa-bubble {
+            max-width: 75%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 16px;
             font-size: 0.95rem;
             line-height: 1.5;
-            animation: fadeInBubble 0.4s ease forwards;
+            position: relative;
+            animation: slideUpIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
         }
 
-        .bubble.user-msg {
-            background: rgba(0, 102, 255, 0.2);
-            color: var(--text-main);
+        /* Sent Voice Note Structure (Right-aligned) */
+        .wa-bubble.user-sent {
+            background-color: var(--wa-outbound);
+            color: #fff;
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
-            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-top-right-radius: 2px;
         }
 
-        .bubble.ai-msg {
-            background: rgba(255, 255, 255, 0.05);
-            color: #E2E8F0;
+        /* Received AI Response Structure (Left-aligned) */
+        .wa-bubble.ai-received {
+            background-color: var(--wa-inbound);
+            color: #e4e4e7;
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
+            border-top-left-radius: 2px;
             border-left: 3px solid var(--primary-neon);
         }
 
-        @keyframes fadeInBubble {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .bubble-meta {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            align-self: flex-end;
+            margin-top: 0.2rem;
         }
 
-        /* Footer Styling */
+        .audio-wave-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.2rem;
+        }
+
+        @keyframes slideUpIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Bottom Consolidated Action Control System */
+        .whatsapp-footer-controls {
+            background: rgba(11, 15, 25, 0.9);
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .controls-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .proto-select-wrapper {
+            flex: 1;
+            max-width: 240px;
+        }
+
+        .whatsapp-footer-controls .prototype-select {
+            margin-bottom: 0;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Centered Compact Mic System Trigger */
+        .proto-record-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-neon), #00D1B2);
+            border: none;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
+            transition: var(--transition-fast);
+        }
+
+        .proto-record-circle:hover { transform: scale(1.08); }
+        
+        .proto-record-circle.recording {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            color: #fff;
+            animation: recordPulse 1.5s infinite;
+        }
+
+        /* Footer Adjustments */
         footer {
             text-align: center;
             padding: 3rem;
@@ -475,14 +549,13 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive adjustments */
         @media(max-width: 900px) {
-            .hero-container, .proto-layout { grid-template-columns: 1fr; }
-            .proto-left-panel { border-right: none; padding-right: 0; padding-bottom: 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+            .hero-container { grid-template-columns: 1fr; }
             .hero-content p { margin-left: auto; margin-right: auto; }
             .hero-actions { justify-content: center; }
             .hero-visual { display: none; }
             .hero-content h1 { font-size: 2.5rem; }
+            .whatsapp-container { height: 680px; }
         }
     </style>
 </head>
@@ -496,6 +569,7 @@
         </ul>
     </nav>
 
+    <!-- VIEW 1: DATA DRIVE LANDING -->
     <div id="view-landing" class="app-view active-view">
         <header class="hero">
             <div class="hero-container">
@@ -577,39 +651,65 @@
         </section>
     </div>
 
+    <!-- VIEW 2: OVERHAULED WHATSAPP PROTOTYPE PLAYGROUND -->
     <div id="view-prototype" class="app-view">
         <div class="proto-wrapper">
-            <div class="proto-layout">
+            <div class="whatsapp-container">
                 
-                <div class="proto-left-panel">
-                    <h2>Interactive AI</h2>
-                    <p>Speak to Sauti-AI naturally. The conversational engine will respond using a natural native accent model.</p>
-                    
-                    <select class="prototype-select" id="proto-accent-select">
-                        <option value="General">Target Output: Match My Accent</option>
-                        <option value="Pidgin">Target Output: Force Pidgin Voice</option>
-                    </select>
-
-                    <div class="record-interface">
-                        <button id="proto-record-btn" class="record-circle" style="background: linear-gradient(135deg, var(--primary-neon), #00D1B2); color: #000;">
-                            <i class="fa-solid fa-microphone" id="proto-mic-icon"></i>
-                        </button>
-                        <div class="wave-container" id="proto-wave-visualizer">
-                            <span class="stroke"></span>
-                            <span class="stroke"></span>
-                            <span class="stroke"></span>
-                            <span class="stroke"></span>
-                            <span class="stroke"></span>
+                <!-- Chat Window Header Bar -->
+                <div class="chat-window-header">
+                    <div class="chat-profile-meta">
+                        <div class="avatar-glow"><i class="fa-solid fa-robot"></i></div>
+                        <div class="profile-status">
+                            <h3>Sauti-AI Prototype Engine</h3>
+                            <p><span></span> Live Interactive Pipeline Node</p>
                         </div>
-                        <p id="proto-status-text">Tap circle to talk to AI</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 1.2rem; cursor: pointer;"></i>
+                        <i class="fa-solid fa-video" style="color: var(--text-muted); cursor: pointer;"></i>
                     </div>
                 </div>
 
-                <div class="proto-right-panel">
-                    <div class="chat-header"><span></span> Sauti-AI Audio Context logs</div>
-                    <div class="chat-output-area" id="chat-box">
-                        <div class="bubble ai-msg">👋 Aribo! I am active. Tap the green microphone circle, say something, and let's test our live voice-reply interaction processing loop.</div>
+                <!-- Scrollable Conversational Feed Stack -->
+                <div class="whatsapp-feed" id="chat-box">
+                    <div class="wa-bubble ai-received">
+                        <div>👋 Aribo! I'm your native voice matching assistant. Select an output preset below, press down the microphone, and let's exchange voice notes!</div>
+                        <span class="bubble-meta">Sauti Node</span>
                     </div>
+                </div>
+
+                <!-- Unified Bottom Controls (Centering the Microphone Button) -->
+                <div class="whatsapp-footer-controls">
+                    
+                    <div class="wave-container" id="proto-wave-visualizer" style="margin-bottom: 0.2rem;">
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                    </div>
+                    
+                    <p id="proto-status-text">Tap circle to record voice message</p>
+
+                    <div class="controls-row">
+                        <!-- Left Aligned Target Tuning Option Dropdown -->
+                        <div class="proto-select-wrapper">
+                            <select class="prototype-select" id="proto-accent-select">
+                                <option value="General">Output: Match Accent</option>
+                                <option value="Pidgin">Output: Force Pidgin Voice</option>
+                            </select>
+                        </div>
+
+                        <!-- Absolute Centered Main Recording Loop Ring Button -->
+                        <button id="proto-record-btn" class="proto-record-circle">
+                            <i class="fa-solid fa-microphone" id="proto-mic-icon"></i>
+                        </button>
+
+                        <!-- Symmetrical Empty Node to Balance Flex Layout Alignment -->
+                        <div class="proto-select-wrapper" style="visibility: hidden; pointer-events: none;"></div>
+                    </div>
+
                 </div>
 
             </div>
@@ -621,11 +721,9 @@
     </footer>
 
     <script>
-        // Set Local Python Server Instance Target URL Context Path
         const BACKEND_URL = "http://127.0.0.1:8000";
 
         document.addEventListener('DOMContentLoaded', () => {
-            // View Navigation Selectors
             const viewLanding = document.getElementById('view-landing');
             const viewPrototype = document.getElementById('view-prototype');
             const linkLanding = document.getElementById('link-landing');
@@ -633,7 +731,6 @@
             const navLogo = document.getElementById('nav-logo');
             const heroToProto = document.getElementById('hero-to-proto');
 
-            // Routing helper function
             function switchView(targetView) {
                 document.querySelectorAll('.app-view').forEach(view => {
                     view.classList.remove('active-view');
@@ -647,15 +744,12 @@
                 }
             }
 
-            // Route Triggers via the Explicit "Test Prototype" buttons
             linkProtoBtn.addEventListener('click', (e) => { e.preventDefault(); switchView('prototype'); });
             heroToProto.addEventListener('click', () => switchView('prototype'));
-            
-            // Standard back navigation links
             linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
             navLogo.addEventListener('click', () => switchView('landing'));
 
-            // --- DESIGN 1 HARDWARE LOGIC: VOICE COLLECTION DRIVE LOOP ---
+            // --- DESIGN 1 LOGIC: VOICE COLLECTION DRIVE LOOP ---
             const recordBtn = document.getElementById('main-record-btn');
             const micIcon = document.getElementById('mic-icon');
             const statusText = document.getElementById('status-text');
@@ -690,7 +784,6 @@
                             const audioBlob = new Blob(driveChunks, { type: 'audio/wav' });
                             statusText.textContent = "Uploading asset to Sauti dataset storage...";
                             
-                            // Network payload execution structure
                             const formData = new FormData();
                             formData.append("accent", accentSelect.value);
                             formData.append("transcript", promptText.innerText);
@@ -736,7 +829,7 @@
                 }
             });
 
-            // --- DESIGN 2 HARDWARE LOGIC: PROTOTYPE VOICE-TO-VOICE PLAYGROUND ---
+            // --- DESIGN 2 OVERHAULED WHATSAPP INTERACT SYSTEM ---
             const protoRecordBtn = document.getElementById('proto-record-btn');
             const protoMicIcon = document.getElementById('proto-mic-icon');
             const protoStatusText = document.getElementById('proto-status-text');
@@ -761,18 +854,24 @@
 
                         mediaRecorderProto.onstop = async () => {
                             const audioBlob = new Blob(protoChunks, { type: 'audio/wav' });
-                            protoStatusText.textContent = "Thinking...";
+                            protoStatusText.textContent = "AI is listening & generating audio...";
 
                             const selectedAccent = protoAccentSelect.value || 'General';
 
-                            // Append real user dialogue feedback component visually
+                            // Append user-sent voice bubble on the RIGHT side
                             const userMessage = document.createElement('div');
-                            userMessage.className = "bubble user-msg";
-                            userMessage.innerHTML = `🎙️ <em>Sent Voice Clip (${selectedAccent})</em>`;
+                            userMessage.className = "wa-bubble user-sent";
+                            userMessage.innerHTML = `
+                                <div class="audio-wave-placeholder">
+                                    <i class="fa-solid fa-play"></i>
+                                    <i class="fa-solid fa-waveform" style="letter-spacing: 2px; color: var(--primary-neon);"></i>
+                                    <span>Voice Note (${selectedAccent})</span>
+                                </div>
+                                <span class="bubble-meta">You &middot; Sent</span>
+                            `;
                             chatBox.appendChild(userMessage);
                             chatBox.scrollTop = chatBox.scrollHeight;
 
-                            // Form compilation block mapping directly to FastAPI fields
                             const formData = new FormData();
                             formData.append("target_accent", selectedAccent);
                             formData.append("user_audio", audioBlob, "playground_mic.wav");
@@ -784,17 +883,22 @@
                                 });
 
                                 if (!response.ok) throw new Error("Pipeline drop");
-
                                 const data = await response.json();
 
-                                // Render the response text transcript block
+                                // Append AI response bubble on the LEFT side
                                 const aiMessage = document.createElement('div');
-                                aiMessage.className = "bubble ai-msg";
-                                aiMessage.innerHTML = `🤖 <strong>Sauti AI Response:</strong> ${data.ai_text_log}`;
+                                aiMessage.className = "wa-bubble ai-received";
+                                aiMessage.innerHTML = `
+                                    <div class="audio-wave-placeholder" style="background: rgba(255,255,255,0.05)">
+                                        <i class="fa-solid fa-volume-high" style="color: var(--primary-neon);"></i>
+                                        <strong>Audio Response Block</strong>
+                                    </div>
+                                    <div>"${data.ai_text_log}"</div>
+                                    <span class="bubble-meta">Sauti AI &middot; Delivered</span>
+                                `;
                                 chatBox.appendChild(aiMessage);
                                 chatBox.scrollTop = chatBox.scrollHeight;
 
-                                // SOUND RESPONSE COUPLING LAYER
                                 if(data.ai_audio_reply_url) {
                                     const audioReply = new Audio();
                                     audioReply.src = data.ai_audio_reply_url;
@@ -805,21 +909,24 @@
                             } catch (err) {
                                 console.error("Pipeline routing dropped:", err);
                                 const errorMessage = document.createElement('div');
-                                errorMessage.className = "bubble ai-msg";
+                                errorMessage.className = "wa-bubble ai-received";
                                 errorMessage.style.borderLeftColor = "#ff3333";
-                                errorMessage.innerHTML = `❌ <strong>System Error:</strong> Connection to local Python server dropped.`;
+                                errorMessage.innerHTML = `
+                                    <div>❌ <strong>System Error:</strong> Connection to backend API dropped. Make sure your Python FastAPI environment is running.</div>
+                                    <span class="bubble-meta">System</span>
+                                `;
                                 chatBox.appendChild(errorMessage);
                                 chatBox.scrollTop = chatBox.scrollHeight;
                             }
 
-                            protoStatusText.textContent = "Tap circle to talk to AI";
+                            protoStatusText.textContent = "Tap circle to record voice message";
                         };
 
                         mediaRecorderProto.start();
                         isRecordingProto = true;
                         protoRecordBtn.classList.add('recording');
                         protoMicIcon.className = "fa-solid fa-square";
-                        protoStatusText.textContent = "Listening to you... Tap again to send.";
+                        protoStatusText.textContent = "Listening... Tap square to finalize & send.";
                         protoWaveVisualizer.classList.add('active');
 
                     } catch (err) {
@@ -829,7 +936,955 @@
                 } else {
                     if (mediaRecorderProto && mediaRecorderProto.state !== "inactive") {
                         mediaRecorderProto.stop();
-                        // Safely kill the hardware stream tracks right away
+                        mediaRecorderProto.stream.getTracks().forEach(track => track.stop());
+                    }
+                    isRecordingProto = false;
+                    protoRecordBtn.classList.remove('recording');
+                    protoMicIcon.className = "fa-solid fa-microphone";
+                    protoWaveVisualizer.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sauti-AI | Empowering African Voices</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Color Palette & Custom Variables */
+        :root {
+            --bg-dark: #0B0F19;        
+            --bg-card: #151D30;        
+            --primary-neon: #00FF87;   
+            --secondary-blue: #0066FF; 
+            --text-main: #FFFFFF;
+            --text-muted: #8F9CAE;
+            --transition-fast: all 0.3s ease;
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* WhatsApp-inspired Theme Tweaks for Dark Mode */
+            --wa-outbound: #005c4b;
+            --wa-inbound: #202c33;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, var(--primary-neon), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* SPA View Management */
+        .app-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition-smooth);
+        }
+
+        .app-view.active-view {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 8%;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        .logo span { color: var(--primary-neon); }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-fast);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-neon);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.6rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition-fast);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-neon), #00E1D9);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 135, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 102, 255, 0.15);
+            color: var(--secondary-blue);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-blue);
+            color: #fff;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-neon);
+            color: var(--primary-neon);
+        }
+
+        /* DESIGN 1: LANDING PAGE SPECIFIC STYLES */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 8%;
+            padding-top: 100px;
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .badge {
+            background: rgba(0, 255, 135, 0.1);
+            color: var(--primary-neon);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(0, 255, 135, 0.2);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 550px;
+        }
+
+        .hero-actions { display: flex; gap: 1rem; }
+
+        .hero-visual { display: flex; justify-content: center; }
+
+        .abstract-globe {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(0,102,255,0.2) 0%, rgba(11,15,25,0) 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .globe-icon {
+            font-size: 5rem;
+            color: var(--secondary-blue);
+            z-index: 2;
+            filter: drop-shadow(0 0 15px rgba(0, 102, 255, 0.6));
+        }
+
+        .pulse-ring {
+            position: absolute;
+            border: 2px solid var(--primary-neon);
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: pulse 3s infinite linear;
+        }
+
+        .delay-1 { animation-delay: 1s; }
+        .delay-2 { animation-delay: 2s; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .steps-section {
+            padding: 6rem 8%;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 50%, var(--bg-dark) 100%);
+            text-align: center;
+        }
+
+        .steps-section h2 { font-size: 2.5rem; margin-bottom: 4rem; }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .step-card {
+            background: rgba(21, 29, 48, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            transition: var(--transition-fast);
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 102, 255, 0.3);
+            background: rgba(21, 29, 48, 0.8);
+        }
+
+        .step-icon { font-size: 2.5rem; color: var(--primary-neon); margin-bottom: 1.5rem; }
+        .step-card h3 { margin-bottom: 1rem; font-size: 1.3rem; }
+        .step-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        .record-container-section {
+            padding: 4rem 8% 8rem 8%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .record-box {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 700px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .record-box h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .instruction { color: var(--text-muted); margin-bottom: 2rem; }
+
+        #accent-select, .prototype-select {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 350px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: var(--transition-fast);
+        }
+
+        #accent-select:focus, .prototype-select:focus { border-color: var(--secondary-blue); }
+
+        .prompt-display {
+            background: rgba(11, 15, 25, 0.6);
+            border-left: 4px solid var(--primary-neon);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        #prompt-text { font-size: 1.25rem; font-style: italic; line-height: 1.6; }
+
+        .record-interface { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+
+        .record-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066FF, #0052cc);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.5);
+            transition: var(--transition-fast);
+        }
+
+        .record-circle:hover { transform: scale(1.05); }
+
+        .record-circle.recording {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            animation: recordPulse 1.5s infinite;
+        }
+
+        @keyframes recordPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 51, 51, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
+        }
+
+        #status-text, #proto-status-text { font-weight: 500; font-size: 0.95rem; color: var(--text-muted); }
+
+        .wave-container { display: none; align-items: center; justify-content: center; height: 30px; gap: 4px; }
+        .wave-container.active { display: flex; }
+
+        .stroke {
+            display: block;
+            background: var(--primary-neon);
+            height: 100%;
+            width: 4px;
+            border-radius: 10px;
+            animation: waveAnimation 1.2s infinite ease-in-out;
+        }
+        .stroke:nth-child(1) { animation-delay: 0s; }
+        .stroke:nth-child(2) { animation-delay: 0.3s; }
+        .stroke:nth-child(3) { animation-delay: 0.6s; }
+        .stroke:nth-child(4) { animation-delay: 0.9s; }
+        .stroke:nth-child(5) { animation-delay: 0.2s; }
+
+        @keyframes waveAnimation {
+            0% { height: 5px; }
+            50% { height: 30px; }
+            100% { height: 5px; }
+        }
+
+        /* DESIGN 2: NEW WHATSAPP-STYLE CHAT LAYOUT */
+        .proto-wrapper {
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-inline: 5%;
+        }
+
+        .whatsapp-container {
+            width: 100%;
+            max-width: 750px;
+            height: 780px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        /* Chat Window Header */
+        .chat-window-header {
+            background: rgba(11, 15, 25, 0.8);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-glow {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-blue));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .profile-status h3 { font-size: 1.05rem; font-weight: 600; }
+        .profile-status p { font-size: 0.8rem; color: var(--primary-neon); display: flex; align-items: center; gap: 0.3rem; }
+        .profile-status p span { width: 6px; height: 6px; background: var(--primary-neon); border-radius: 50%; display: inline-block; box-shadow: 0 0 6px var(--primary-neon); }
+
+        /* Scrollable Message Feed Area */
+        .whatsapp-feed {
+            flex-grow: 1;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
+            background-size: 24px 24px;
+            background-color: rgba(11, 15, 25, 0.3);
+        }
+
+        /* Clean Message Bubble Hierarchies */
+        .wa-bubble {
+            max-width: 75%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            animation: slideUpIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        /* Sent Voice Note Structure (Right-aligned) */
+        .wa-bubble.user-sent {
+            background-color: var(--wa-outbound);
+            color: #fff;
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+
+        /* Received AI Response Structure (Left-aligned) */
+        .wa-bubble.ai-received {
+            background-color: var(--wa-inbound);
+            color: #e4e4e7;
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+            border-left: 3px solid var(--primary-neon);
+        }
+
+        .bubble-meta {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            align-self: flex-end;
+            margin-top: 0.2rem;
+        }
+
+        .audio-wave-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.2rem;
+        }
+
+        @keyframes slideUpIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Bottom Consolidated Action Control System */
+        .whatsapp-footer-controls {
+            background: rgba(11, 15, 25, 0.9);
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .controls-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .proto-select-wrapper {
+            flex: 1;
+            max-width: 240px;
+        }
+
+        .whatsapp-footer-controls .prototype-select {
+            margin-bottom: 0;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Centered Compact Mic System Trigger */
+        .proto-record-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-neon), #00D1B2);
+            border: none;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
+            transition: var(--transition-fast);
+        }
+
+        .proto-record-circle:hover { transform: scale(1.08); }
+        
+        .proto-record-circle.recording {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            color: #fff;
+            animation: recordPulse 1.5s infinite;
+        }
+
+        /* Footer Adjustments */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media(max-width: 900px) {
+            .hero-container { grid-template-columns: 1fr; }
+            .hero-content p { margin-left: auto; margin-right: auto; }
+            .hero-actions { justify-content: center; }
+            .hero-visual { display: none; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .whatsapp-container { height: 680px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo" id="nav-logo">sauti<span>.ai</span></div>
+        <ul class="nav-links">
+            <li><a href="#" id="link-landing">Data Drive</a></li>
+            <li><a href="#" id="link-proto-btn" class="btn btn-secondary">Test Prototype</a></li>
+        </ul>
+    </nav>
+
+    <!-- VIEW 1: DATA DRIVE LANDING -->
+    <div id="view-landing" class="app-view active-view">
+        <header class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <span class="badge">Nationwide Voice Data Drive</span>
+                    <h1>Help Build the Future of <span class="highlight">African Voice AI</span></h1>
+                    <p>Every accent tells a story. Contribute your unique voice today to train an AI that truly understands, speaks, and represents our diverse linguistic heritage.</p>
+                    <div class="hero-actions">
+                        <a href="#record-section" class="btn btn-primary"><i class="fa-solid fa-microphone"></i> Contribute Your Voice</a>
+                        <button id="hero-to-proto" class="btn btn-outline">Test Prototype</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="abstract-globe">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring delay-1"></div>
+                        <div class="pulse-ring delay-2"></div>
+                        <i class="fa-solid fa-earth-africa globe-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="how-it-works" class="steps-section">
+            <h2>Make An Impact In <span class="highlight">3 Simple Steps</span></h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
+                    <h3>1. Select Demographic</h3>
+                    <p>Choose your region and language accent so our models map the data accurately.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h3>2. Record Prompt</h3>
+                    <p>Read a short, natural prompt displayed on your screen using your everyday voice.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h3>3. Secure Submit</h3>
+                    <p>Your data is safely uploaded. Feel free to switch tabs to test our prototype model responses.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="record-section" class="record-container-section">
+            <div class="record-box">
+                <h2>Start Your Recording</h2>
+                <p class="instruction">Select your dialect/accent below and read the prompt naturally.</p>
+                
+                <div class="selector-group">
+                    <select id="accent-select">
+                        <option value="" disabled selected>Select Accent / Dialect</option>
+                        <option value="Pidgin">Pidgin</option>
+                        <option value="Yoruba-Infused English">Yoruba-Infused English</option>
+                        <option value="Igbo-Infused English">Igbo-Infused English</option>
+                        <option value="Hausa-Infused English">Hausa-Infused English</option>
+                        <option value="General Accent">General/Other</option>
+                    </select>
+                </div>
+
+                <div class="prompt-display">
+                    <p id="prompt-text">"Sauti-AI is connecting Africa, one voice note at a time. Let's build this together."</p>
+                </div>
+
+                <div class="record-interface">
+                    <button id="main-record-btn" class="record-circle">
+                        <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                    </button>
+                    <div class="wave-container" id="wave-visualizer">
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                    </div>
+                    <p id="status-text">Click to start recording</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- VIEW 2: OVERHAULED WHATSAPP PROTOTYPE PLAYGROUND -->
+    <div id="view-prototype" class="app-view">
+        <div class="proto-wrapper">
+            <div class="whatsapp-container">
+                
+                <!-- Chat Window Header Bar -->
+                <div class="chat-window-header">
+                    <div class="chat-profile-meta">
+                        <div class="avatar-glow"><i class="fa-solid fa-robot"></i></div>
+                        <div class="profile-status">
+                            <h3>Sauti-AI Prototype Engine</h3>
+                            <p><span></span> Live Interactive Pipeline Node</p>
+                        </div>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 1.2rem; cursor: pointer;"></i>
+                        <i class="fa-solid fa-video" style="color: var(--text-muted); cursor: pointer;"></i>
+                    </div>
+                </div>
+
+                <!-- Scrollable Conversational Feed Stack -->
+                <div class="whatsapp-feed" id="chat-box">
+                    <div class="wa-bubble ai-received">
+                        <div>👋 Aribo! I'm your native voice matching assistant. Select an output preset below, press down the microphone, and let's exchange voice notes!</div>
+                        <span class="bubble-meta">Sauti Node</span>
+                    </div>
+                </div>
+
+                <!-- Unified Bottom Controls (Centering the Microphone Button) -->
+                <div class="whatsapp-footer-controls">
+                    
+                    <div class="wave-container" id="proto-wave-visualizer" style="margin-bottom: 0.2rem;">
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                    </div>
+                    
+                    <p id="proto-status-text">Tap circle to record voice message</p>
+
+                    <div class="controls-row">
+                        <!-- Left Aligned Target Tuning Option Dropdown -->
+                        <div class="proto-select-wrapper">
+                            <select class="prototype-select" id="proto-accent-select">
+                                <option value="General">Output: Match Accent</option>
+                                <option value="Pidgin">Output: Force Pidgin Voice</option>
+                            </select>
+                        </div>
+
+                        <!-- Absolute Centered Main Recording Loop Ring Button -->
+                        <button id="proto-record-btn" class="proto-record-circle">
+                            <i class="fa-solid fa-microphone" id="proto-mic-icon"></i>
+                        </button>
+
+                        <!-- Symmetrical Empty Node to Balance Flex Layout Alignment -->
+                        <div class="proto-select-wrapper" style="visibility: hidden; pointer-events: none;"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Sauti-AI. Built for scaling African speech datasets.</p>
+    </footer>
+
+    <script>
+        const BACKEND_URL = "http://127.0.0.1:8000";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewLanding = document.getElementById('view-landing');
+            const viewPrototype = document.getElementById('view-prototype');
+            const linkLanding = document.getElementById('link-landing');
+            const linkProtoBtn = document.getElementById('link-proto-btn');
+            const navLogo = document.getElementById('nav-logo');
+            const heroToProto = document.getElementById('hero-to-proto');
+
+            function switchView(targetView) {
+                document.querySelectorAll('.app-view').forEach(view => {
+                    view.classList.remove('active-view');
+                });
+                if(targetView === 'landing') {
+                    viewLanding.classList.add('active-view');
+                    window.scrollTo(0,0);
+                } else if(targetView === 'prototype') {
+                    viewPrototype.classList.add('active-view');
+                    window.scrollTo(0,0);
+                }
+            }
+
+            linkProtoBtn.addEventListener('click', (e) => { e.preventDefault(); switchView('prototype'); });
+            heroToProto.addEventListener('click', () => switchView('prototype'));
+            linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
+            navLogo.addEventListener('click', () => switchView('landing'));
+
+            // --- DESIGN 1 LOGIC: VOICE COLLECTION DRIVE LOOP ---
+            const recordBtn = document.getElementById('main-record-btn');
+            const micIcon = document.getElementById('mic-icon');
+            const statusText = document.getElementById('status-text');
+            const waveVisualizer = document.getElementById('wave-visualizer');
+            const accentSelect = document.getElementById('accent-select');
+            const promptText = document.getElementById('prompt-text');
+
+            let isRecordingDrive = false;
+            let mediaRecorderDrive = null;
+            let driveChunks = [];
+
+            recordBtn.addEventListener('click', async () => {
+                if (accentSelect.value === "") {
+                    statusText.style.color = "#ff3333";
+                    statusText.textContent = "Please select an accent before recording!";
+                    accentSelect.focus();
+                    return;
+                }
+                statusText.style.color = "var(--text-muted)";
+
+                if (!isRecordingDrive) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        driveChunks = [];
+                        mediaRecorderDrive = new MediaRecorder(stream);
+
+                        mediaRecorderDrive.ondataavailable = (e) => {
+                            if (e.data.size > 0) driveChunks.push(e.data);
+                        };
+
+                        mediaRecorderDrive.onstop = async () => {
+                            const audioBlob = new Blob(driveChunks, { type: 'audio/wav' });
+                            statusText.textContent = "Uploading asset to Sauti dataset storage...";
+                            
+                            const formData = new FormData();
+                            formData.append("accent", accentSelect.value);
+                            formData.append("transcript", promptText.innerText);
+                            formData.append("audio_file", audioBlob, "contribution.wav");
+
+                            try {
+                                const res = await fetch(`${BACKEND_URL}/api/upload-dataset`, {
+                                    method: "POST",
+                                    body: formData
+                                });
+                                if(!res.ok) throw new Error("Upload Failed");
+                                
+                                statusText.style.color = "var(--primary-neon)";
+                                statusText.textContent = "Successfully uploaded! Thank you for contributing.";
+                            } catch (err) {
+                                console.error("Upload error:", err);
+                                statusText.style.color = "#ff3333";
+                                statusText.textContent = "Network drop. Ensure FastAPI server is running.";
+                            }
+                        };
+
+                        mediaRecorderDrive.start();
+                        isRecordingDrive = true;
+                        recordBtn.classList.add('recording');
+                        micIcon.className = "fa-solid fa-square";
+                        statusText.textContent = "Recording... Click again to stop.";
+                        waveVisualizer.classList.add('active');
+
+                    } catch (err) {
+                        console.error("Mic error:", err);
+                        statusText.style.color = "#ff3333";
+                        statusText.textContent = "Mic hardware unavailable or blocked.";
+                    }
+                } else {
+                    if (mediaRecorderDrive && mediaRecorderDrive.state !== "inactive") {
+                        mediaRecorderDrive.stop();
+                        mediaRecorderDrive.stream.getTracks().forEach(track => track.stop());
+                    }
+                    isRecordingDrive = false;
+                    recordBtn.classList.remove('recording');
+                    micIcon.className = "fa-solid fa-microphone";
+                    waveVisualizer.classList.remove('active');
+                }
+            });
+
+            // --- DESIGN 2 OVERHAULED WHATSAPP INTERACT SYSTEM ---
+            const protoRecordBtn = document.getElementById('proto-record-btn');
+            const protoMicIcon = document.getElementById('proto-mic-icon');
+            const protoStatusText = document.getElementById('proto-status-text');
+            const protoWaveVisualizer = document.getElementById('proto-wave-visualizer');
+            const protoAccentSelect = document.getElementById('proto-accent-select');
+            const chatBox = document.getElementById('chat-box');
+
+            let isRecordingProto = false;
+            let mediaRecorderProto = null;
+            let protoChunks = [];
+
+            protoRecordBtn.addEventListener('click', async () => {
+                if(!isRecordingProto) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        protoChunks = [];
+                        mediaRecorderProto = new MediaRecorder(stream);
+
+                        mediaRecorderProto.ondataavailable = (e) => {
+                            if (e.data.size > 0) protoChunks.push(e.data);
+                        };
+
+                        mediaRecorderProto.onstop = async () => {
+                            const audioBlob = new Blob(protoChunks, { type: 'audio/wav' });
+                            protoStatusText.textContent = "AI is listening & generating audio...";
+
+                            const selectedAccent = protoAccentSelect.value || 'General';
+
+                            // Append user-sent voice bubble on the RIGHT side
+                            const userMessage = document.createElement('div');
+                            userMessage.className = "wa-bubble user-sent";
+                            userMessage.innerHTML = `
+                                <div class="audio-wave-placeholder">
+                                    <i class="fa-solid fa-play"></i>
+                                    <i class="fa-solid fa-waveform" style="letter-spacing: 2px; color: var(--primary-neon);"></i>
+                                    <span>Voice Note (${selectedAccent})</span>
+                                </div>
+                                <span class="bubble-meta">You &middot; Sent</span>
+                            `;
+                            chatBox.appendChild(userMessage);
+                            chatBox.scrollTop = chatBox.scrollHeight;
+
+                            const formData = new FormData();
+                            formData.append("target_accent", selectedAccent);
+                            formData.append("user_audio", audioBlob, "playground_mic.wav");
+
+                            try {
+                                const response = await fetch(`${BACKEND_URL}/api/interact`, {
+                                    method: "POST",
+                                    body: formData
+                                });
+
+                                if (!response.ok) throw new Error("Pipeline drop");
+                                const data = await response.json();
+
+                                // Append AI response bubble on the LEFT side
+                                const aiMessage = document.createElement('div');
+                                aiMessage.className = "wa-bubble ai-received";
+                                aiMessage.innerHTML = `
+                                    <div class="audio-wave-placeholder" style="background: rgba(255,255,255,0.05)">
+                                        <i class="fa-solid fa-volume-high" style="color: var(--primary-neon);"></i>
+                                        <strong>Audio Response Block</strong>
+                                    </div>
+                                    <div>"${data.ai_text_log}"</div>
+                                    <span class="bubble-meta">Sauti AI &middot; Delivered</span>
+                                `;
+                                chatBox.appendChild(aiMessage);
+                                chatBox.scrollTop = chatBox.scrollHeight;
+
+                                if(data.ai_audio_reply_url) {
+                                    const audioReply = new Audio();
+                                    audioReply.src = data.ai_audio_reply_url;
+                                    audioReply.crossOrigin = "anonymous";
+                                    await audioReply.play();
+                                }
+
+                            } catch (err) {
+                                console.error("Pipeline routing dropped:", err);
+                                const errorMessage = document.createElement('div');
+                                errorMessage.className = "wa-bubble ai-received";
+                                errorMessage.style.borderLeftColor = "#ff3333";
+                                errorMessage.innerHTML = `
+                                    <div>❌ <strong>System Error:</strong> Connection to backend API dropped. Make sure your Python FastAPI environment is running.</div>
+                                    <span class="bubble-meta">System</span>
+                                `;
+                                chatBox.appendChild(errorMessage);
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            }
+
+                            protoStatusText.textContent = "Tap circle to record voice message";
+                        };
+
+                        mediaRecorderProto.start();
+                        isRecordingProto = true;
+                        protoRecordBtn.classList.add('recording');
+                        protoMicIcon.className = "fa-solid fa-square";
+                        protoStatusText.textContent = "Listening... Tap square to finalize & send.";
+                        protoWaveVisualizer.classList.add('active');
+
+                    } catch (err) {
+                        console.error("Mic error:", err);
+                        protoStatusText.textContent = "Mic hardware unavailable or blocked.";
+                    }
+                } else {
+                    if (mediaRecorderProto && mediaRecorderProto.state !== "inactive") {
+                        mediaRecorderProto.stop();
                         mediaRecorderProto.stream.getTracks().forEach(track => track.stop());
                     }
                     isRecordingProto = false;
