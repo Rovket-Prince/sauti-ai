@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sauti-AI | Empowering African Voices</title>
-    <!-- FontAwesome for clean icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -489,17 +488,14 @@
 </head>
 <body>
 
-    <!-- Shared Navigation Bar -->
     <nav class="navbar">
         <div class="logo" id="nav-logo">sauti<span>.ai</span></div>
         <ul class="nav-links">
             <li><a href="#" id="link-landing">Data Drive</a></li>
-            <!-- Requested Transition Hook on this button -->
             <li><a href="#" id="link-proto-btn" class="btn btn-secondary">Test Prototype</a></li>
         </ul>
     </nav>
 
-    <!-- VIEW 1: LANDING PAGE & COLLECTION DRIVE -->
     <div id="view-landing" class="app-view active-view">
         <header class="hero">
             <div class="hero-container">
@@ -509,7 +505,6 @@
                     <p>Every accent tells a story. Contribute your unique voice today to train an AI that truly understands, speaks, and represents our diverse linguistic heritage.</p>
                     <div class="hero-actions">
                         <a href="#record-section" class="btn btn-primary"><i class="fa-solid fa-microphone"></i> Contribute Your Voice</a>
-                        <!-- Requested Transition Hook on this button too -->
                         <button id="hero-to-proto" class="btn btn-outline">Test Prototype</button>
                     </div>
                 </div>
@@ -582,12 +577,10 @@
         </section>
     </div>
 
-    <!-- VIEW 2: INTERACTIVE PROTOTYPE TEST PAGE -->
     <div id="view-prototype" class="app-view">
         <div class="proto-wrapper">
             <div class="proto-layout">
                 
-                <!-- Left Interaction Panel with Centralized Circle Record Button -->
                 <div class="proto-left-panel">
                     <h2>Interactive AI</h2>
                     <p>Speak to Sauti-AI naturally. The conversational engine will respond using a natural native accent model.</p>
@@ -612,7 +605,6 @@
                     </div>
                 </div>
 
-                <!-- Right Live Text Chat Mirror Panel -->
                 <div class="proto-right-panel">
                     <div class="chat-header"><span></span> Sauti-AI Audio Context logs</div>
                     <div class="chat-output-area" id="chat-box">
@@ -624,13 +616,14 @@
         </div>
     </div>
 
-    <!-- Shared Footer -->
     <footer>
         <p>&copy; 2026 Sauti-AI. Built for scaling African speech datasets.</p>
     </footer>
 
-    <!-- INTERACTIVE SPA ROUTING & CORE SCRIPTS -->
     <script>
+        // Set Local Python Server Instance Target URL Context Path
+        const BACKEND_URL = "http://127.0.0.1:8000";
+
         document.addEventListener('DOMContentLoaded', () => {
             // View Navigation Selectors
             const viewLanding = document.getElementById('view-landing');
@@ -662,16 +655,19 @@
             linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
             navLogo.addEventListener('click', () => switchView('landing'));
 
-            // --- DESIGN 1 JS: VOICE COLLECTION DRIVE LOOP ---
+            // --- DESIGN 1 HARDWARE LOGIC: VOICE COLLECTION DRIVE LOOP ---
             const recordBtn = document.getElementById('main-record-btn');
             const micIcon = document.getElementById('mic-icon');
             const statusText = document.getElementById('status-text');
             const waveVisualizer = document.getElementById('wave-visualizer');
             const accentSelect = document.getElementById('accent-select');
+            const promptText = document.getElementById('prompt-text');
 
             let isRecordingDrive = false;
+            let mediaRecorderDrive = null;
+            let driveChunks = [];
 
-            recordBtn.addEventListener('click', () => {
+            recordBtn.addEventListener('click', async () => {
                 if (accentSelect.value === "") {
                     statusText.style.color = "#ff3333";
                     statusText.textContent = "Please select an accent before recording!";
@@ -681,75 +677,33 @@
                 statusText.style.color = "var(--text-muted)";
 
                 if (!isRecordingDrive) {
-                    isRecordingDrive = true;
-                    recordBtn.classList.add('recording');
-                    micIcon.className = "fa-solid fa-square";
-                    statusText.textContent = "Recording your voice prompt chunk...";
-                    waveVisualizer.classList.add('active');
-                } else {
-                    isRecordingDrive = false;
-                    recordBtn.classList.remove('recording');
-                    micIcon.className = "fa-solid fa-microphone";
-                    statusText.textContent = "Uploading to Sauti dataset storage...";
-                    waveVisualizer.classList.remove('active');
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        driveChunks = [];
+                        mediaRecorderDrive = new MediaRecorder(stream);
 
-                    // Clean dashboard confirmation message without changing pages automatically
-                    setTimeout(() => {
-                        statusText.style.color = "var(--primary-neon)";
-                        statusText.textContent = "Successfully uploaded! Thank you for contributing.";
-                        
-                        setTimeout(() => {
-                            statusText.style.color = "var(--text-muted)";
-                            statusText.textContent = "Click to start recording another prompt";
-                        }, 4000);
-                    }, 1200);
-                }
-            });
+                        mediaRecorderDrive.ondataavailable = (e) => {
+                            if (e.data.size > 0) driveChunks.push(e.data);
+                        };
 
-            // --- DESIGN 2 JS: PROTOTYPE CONVERSATIONAL PLAYGROUND ENGINE ---
-            const protoRecordBtn = document.getElementById('proto-record-btn');
-            const protoMicIcon = document.getElementById('proto-mic-icon');
-            const protoStatusText = document.getElementById('proto-status-text');
-            const protoWaveVisualizer = document.getElementById('proto-wave-visualizer');
-            const chatBox = document.getElementById('chat-box');
+                        mediaRecorderDrive.onstop = async () => {
+                            const audioBlob = new Blob(driveChunks, { type: 'audio/wav' });
+                            statusText.textContent = "Uploading asset to Sauti dataset storage...";
+                            
+                            // Network payload execution structure
+                            const formData = new FormData();
+                            formData.append("accent", accentSelect.value);
+                            formData.append("transcript", promptText.innerText);
+                            formData.append("audio_file", audioBlob, "contribution.wav");
 
-            let isRecordingProto = false;
-
-            protoRecordBtn.addEventListener('click', () => {
-                if(!isRecordingProto) {
-                    isRecordingProto = true;
-                    protoRecordBtn.classList.add('recording');
-                    protoMicIcon.className = "fa-solid fa-square";
-                    protoStatusText.textContent = "Listening to you... Tap again to send.";
-                    protoWaveVisualizer.classList.add('active');
-                } else {
-                    isRecordingProto = false;
-                    protoRecordBtn.classList.remove('recording');
-                    protoMicIcon.className = "fa-solid fa-microphone";
-                    protoStatusText.textContent = "Thinking...";
-                    protoWaveVisualizer.classList.remove('active');
-
-                    // Append mock user audio info block
-                    const userMessage = document.createElement('div');
-                    userMessage.className = "bubble user-msg";
-                    userMessage.innerHTML = `🎙️ <em>Audio Input (${accentSelect.value || 'General Accent'})</em>`;
-                    chatBox.appendChild(userMessage);
-                    chatBox.scrollTop = chatBox.scrollHeight;
-
-                    // Simulated voice-reply processing time frame
-                    setTimeout(() => {
-                        protoStatusText.textContent = "Tap circle to talk to AI";
-                        
-                        const aiMessage = document.createElement('div');
-                        aiMessage.className = "bubble ai-msg";
-                        aiMessage.innerHTML = `🤖 <strong>Sauti AI Response:</strong> I completely understand that accent variant! Running accent translation matrix... your live vocal output rendering sounds clean and natural.`;
-                        
-                        chatBox.appendChild(aiMessage);
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                    }, 1500);
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                            try {
+                                const res = await fetch(`${BACKEND_URL}/api/upload-dataset`, {
+                                    method: "POST",
+                                    body: formData
+                                });
+                                if(!res.ok) throw new Error("Upload Failed");
+                                
+                                statusText.style.color = "var(--primary-neon)";
+                                statusText.textContent = "Successfully uploaded! Thank you for contributing.";
+                            } catch (err) {
+                                statusText.style.color =
