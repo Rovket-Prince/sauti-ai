@@ -9,13 +9,14 @@
     <style>
         /* Color Palette & Custom Variables */
         :root {
-            --bg-dark: #0B0F19;        /* Deep charcoal/navy background */
-            --bg-card: #151D30;        /* Slightly lighter blue-dark for cards */
-            --primary-neon: #00FF87;   /* Vibrant electric green */
-            --secondary-blue: #0066FF; /* Electric blue */
+            --bg-dark: #0B0F19;        
+            --bg-card: #151D30;        
+            --primary-neon: #00FF87;   
+            --secondary-blue: #0066FF; 
             --text-main: #FFFFFF;
             --text-muted: #8F9CAE;
             --transition-fast: all 0.3s ease;
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -38,6 +39,20 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* SPA View Management */
+        .app-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition-smooth);
+        }
+
+        .app-view.active-view {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* Navbar styling */
         .navbar {
             display: flex;
@@ -57,6 +72,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: 1px;
+            cursor: pointer;
         }
         .logo span { color: var(--primary-neon); }
 
@@ -88,6 +104,7 @@
             align-items: center;
             gap: 0.5rem;
             cursor: pointer;
+            border: none;
             transition: var(--transition-fast);
         }
 
@@ -115,6 +132,7 @@
         .btn-outline {
             border: 1px solid var(--text-muted);
             color: var(--text-main);
+            background: transparent;
         }
 
         .btn-outline:hover {
@@ -122,7 +140,7 @@
             color: var(--primary-neon);
         }
 
-        /* Hero Section */
+        /* DESIGN 1: LANDING PAGE SPECIFIC STYLES */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -165,16 +183,9 @@
             max-width: 550px;
         }
 
-        .hero-actions {
-            display: flex;
-            gap: 1rem;
-        }
+        .hero-actions { display: flex; gap: 1rem; }
 
-        /* Animated Neon Visual element */
-        .hero-visual {
-            display: flex;
-            justify-content: center;
-        }
+        .hero-visual { display: flex; justify-content: center; }
 
         .abstract-globe {
             position: relative;
@@ -212,17 +223,13 @@
             100% { transform: scale(1.4); opacity: 0; }
         }
 
-        /* How It Works Section */
         .steps-section {
             padding: 6rem 8%;
             background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 50%, var(--bg-dark) 100%);
             text-align: center;
         }
 
-        .steps-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 4rem;
-        }
+        .steps-section h2 { font-size: 2.5rem; margin-bottom: 4rem; }
 
         .steps-grid {
             display: grid;
@@ -244,24 +251,10 @@
             background: rgba(21, 29, 48, 0.8);
         }
 
-        .step-icon {
-            font-size: 2.5rem;
-            color: var(--primary-neon);
-            margin-bottom: 1.5rem;
-        }
+        .step-icon { font-size: 2.5rem; color: var(--primary-neon); margin-bottom: 1.5rem; }
+        .step-card h3 { margin-bottom: 1rem; font-size: 1.3rem; }
+        .step-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
-        .step-card h3 {
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .step-card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* Recording UI Card Section */
         .record-container-section {
             padding: 4rem 8% 8rem 8%;
             display: flex;
@@ -282,7 +275,7 @@
         .record-box h2 { font-size: 2rem; margin-bottom: 0.5rem; }
         .instruction { color: var(--text-muted); margin-bottom: 2rem; }
 
-        #accent-select {
+        #accent-select, .prototype-select {
             background: var(--bg-dark);
             color: var(--text-main);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -297,9 +290,7 @@
             transition: var(--transition-fast);
         }
 
-        #accent-select:focus {
-            border-color: var(--secondary-blue);
-        }
+        #accent-select:focus, .prototype-select:focus { border-color: var(--secondary-blue); }
 
         .prompt-display {
             background: rgba(11, 15, 25, 0.6);
@@ -309,20 +300,9 @@
             margin-bottom: 3rem;
         }
 
-        #prompt-text {
-            font-size: 1.25rem;
-            font-style: italic;
-            line-height: 1.6;
-            letter-spacing: 0.5px;
-        }
+        #prompt-text { font-size: 1.25rem; font-style: italic; line-height: 1.6; }
 
-        /* Sleek Centered Circular Record Button UI */
-        .record-interface {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
+        .record-interface { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
 
         .record-circle {
             width: 90px;
@@ -340,11 +320,8 @@
             transition: var(--transition-fast);
         }
 
-        .record-circle:hover {
-            transform: scale(1.05);
-        }
+        .record-circle:hover { transform: scale(1.05); }
 
-        /* State class triggered by JS when active recording */
         .record-circle.recording {
             background: linear-gradient(135deg, #ff3333, #cc0000);
             animation: recordPulse 1.5s infinite;
@@ -356,33 +333,19 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
         }
 
-        #status-text {
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-        }
+        #status-text, #proto-status-text { font-weight: 500; font-size: 0.95rem; color: var(--text-muted); }
 
-        /* Basic CSS Waveform Animation container */
-        .wave-container {
-            display: none; /* Controlled by JS */
-            align-items: center;
-            justify-content: center;
-            height: 30px;
-            gap: 4px;
-        }
-
+        .wave-container { display: none; align-items: center; justify-content: center; height: 30px; gap: 4px; }
         .wave-container.active { display: flex; }
 
         .stroke {
             display: block;
-            position: relative;
             background: var(--primary-neon);
             height: 100%;
             width: 4px;
             border-radius: 10px;
             animation: waveAnimation 1.2s infinite ease-in-out;
         }
-
         .stroke:nth-child(1) { animation-delay: 0s; }
         .stroke:nth-child(2) { animation-delay: 0.3s; }
         .stroke:nth-child(3) { animation-delay: 0.6s; }
@@ -393,6 +356,114 @@
             0% { height: 5px; }
             50% { height: 30px; }
             100% { height: 5px; }
+        }
+
+        /* DESIGN 2: PROTOTYPE INTERACTIVE PAGE STYLES */
+        .proto-wrapper {
+            min-height: 100vh;
+            padding-top: 120px;
+            padding-bottom: 6rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-inline: 8%;
+        }
+
+        .proto-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            width: 100%;
+            max-width: 1100px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3.5rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .proto-left-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding-right: 2rem;
+        }
+
+        .proto-left-panel h2 { font-size: 2.2rem; margin-bottom: 1rem; }
+        .proto-left-panel p { color: var(--text-muted); margin-bottom: 2rem; max-width: 400px; }
+
+        .proto-right-panel {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            background: rgba(11, 15, 25, 0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .chat-header {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-neon);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-neon);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--primary-neon);
+        }
+
+        .chat-output-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        /* Chat bubbles */
+        .bubble {
+            max-width: 85%;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: fadeInBubble 0.4s ease forwards;
+        }
+
+        .bubble.user-msg {
+            background: rgba(0, 102, 255, 0.2);
+            color: var(--text-main);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+        }
+
+        .bubble.ai-msg {
+            background: rgba(255, 255, 255, 0.05);
+            color: #E2E8F0;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border-left: 3px solid var(--primary-neon);
+        }
+
+        @keyframes fadeInBubble {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Footer Styling */
@@ -406,10 +477,8 @@
 
         /* Responsive adjustments */
         @media(max-width: 900px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
+            .hero-container, .proto-layout { grid-template-columns: 1fr; }
+            .proto-left-panel { border-right: none; padding-right: 0; padding-bottom: 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
             .hero-content p { margin-left: auto; margin-right: auto; }
             .hero-actions { justify-content: center; }
             .hero-visual { display: none; }
@@ -420,92 +489,132 @@
 <body>
 
     <nav class="navbar">
-        <div class="logo">sauti<span>.ai</span></div>
+        <div class="logo" id="nav-logo">sauti<span>.ai</span></div>
         <ul class="nav-links">
-            <li><a href="#about">Our Mission</a></li>
-            <li><a href="#how-it-works">How It Works</a></li>
-            <li><a href="#" class="btn btn-secondary">Test Prototype</a></li>
+            <li><a href="#" id="link-landing">Data Drive</a></li>
+            <li><a href="#" id="link-proto-btn" class="btn btn-secondary">Test Prototype</a></li>
         </ul>
     </nav>
 
-    <header class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <span class="badge">Nationwide Voice Data Drive</span>
-                <h1>Help Build the Future of <span class="highlight">African Voice AI</span></h1>
-                <p>Every accent tells a story. Contribute your unique voice today to train an AI that truly understands, speaks, and represents our diverse linguistic heritage.</p>
-                <div class="hero-actions">
-                    <a href="#record-section" class="btn btn-primary"><i class="fa-solid fa-microphone"></i> Contribute Your Voice</a>
-                    <a href="#how-it-works" class="btn btn-outline">Learn More</a>
+    <div id="view-landing" class="app-view active-view">
+        <header class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <span class="badge">Nationwide Voice Data Drive</span>
+                    <h1>Help Build the Future of <span class="highlight">African Voice AI</span></h1>
+                    <p>Every accent tells a story. Contribute your unique voice today to train an AI that truly understands, speaks, and represents our diverse linguistic heritage.</p>
+                    <div class="hero-actions">
+                        <a href="#record-section" class="btn btn-primary"><i class="fa-solid fa-microphone"></i> Contribute Your Voice</a>
+                        <button id="hero-to-proto" class="btn btn-outline">Try Interactive AI</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="abstract-globe">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring delay-1"></div>
+                        <div class="pulse-ring delay-2"></div>
+                        <i class="fa-solid fa-earth-africa globe-icon"></i>
+                    </div>
                 </div>
             </div>
-            <div class="hero-visual">
-                <div class="abstract-globe">
-                    <div class="pulse-ring"></div>
-                    <div class="pulse-ring delay-1"></div>
-                    <div class="pulse-ring delay-2"></div>
-                    <i class="fa-solid fa-earth-africa globe-icon"></i>
+        </header>
+
+        <section id="how-it-works" class="steps-section">
+            <h2>Make An Impact In <span class="highlight">3 Simple Steps</span></h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
+                    <h3>1. Select Demographic</h3>
+                    <p>Choose your region and language accent so our models map the data accurately.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h3>2. Record Prompt</h3>
+                    <p>Read a short, natural prompt displayed on your screen using your everyday voice.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h3>3. Secure Submit</h3>
+                    <p>Your data seamlessly redirects to test our conversational voice replies.</p>
                 </div>
             </div>
-        </div>
-    </header>
+        </section>
 
-    <section id="how-it-works" class="steps-section">
-        <h2>Make An Impact In <span class="highlight">3 Simple Steps</span></h2>
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
-                <h3>1. Select Demographic</h3>
-                <p>Choose your region and language accent so our models map the data accurately.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fa-solid fa-microphone-lines"></i></div>
-                <h3>2. Record Prompt</h3>
-                <p>Read a short, natural prompt displayed on your screen using your everyday voice.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                <h3>3. Secure Submit</h3>
-                <p>Your data is securely uploaded into our storage to power regional accent modeling.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="record-section" class="record-container-section">
-        <div class="record-box">
-            <h2>Start Your Recording</h2>
-            <p class="instruction">Select your dialect/accent below and read the prompt naturally.</p>
-            
-            <div class="selector-group">
-                <select id="accent-select">
-                    <option value="" disabled selected>Select Accent / Dialect</option>
-                    <option value="pidgin">Pidgin</option>
-                    <option value="yoruba">Yoruba-Infused English</option>
-                    <option value="igbo">Igbo-Infused English</option>
-                    <option value="hausa">Hausa-Infused English</option>
-                    <option value="general">General/Other</option>
-                </select>
-            </div>
-
-            <div class="prompt-display">
-                <p id="prompt-text">"Sauti-AI is connecting Africa, one voice note at a time. Let's build this together."</p>
-            </div>
-
-            <div class="record-interface">
-                <button id="main-record-btn" class="record-circle">
-                    <i class="fa-solid fa-microphone" id="mic-icon"></i>
-                </button>
-                <div class="wave-container" id="wave-visualizer">
-                    <span class="stroke"></span>
-                    <span class="stroke"></span>
-                    <span class="stroke"></span>
-                    <span class="stroke"></span>
-                    <span class="stroke"></span>
+        <section id="record-section" class="record-container-section">
+            <div class="record-box">
+                <h2>Start Your Recording</h2>
+                <p class="instruction">Select your dialect/accent below and read the prompt naturally.</p>
+                
+                <div class="selector-group">
+                    <select id="accent-select">
+                        <option value="" disabled selected>Select Accent / Dialect</option>
+                        <option value="Pidgin">Pidgin</option>
+                        <option value="Yoruba-Infused English">Yoruba-Infused English</option>
+                        <option value="Igbo-Infused English">Igbo-Infused English</option>
+                        <option value="Hausa-Infused English">Hausa-Infused English</option>
+                        <option value="General Accent">General/Other</option>
+                    </select>
                 </div>
-                <p id="status-text">Click to start recording</p>
+
+                <div class="prompt-display">
+                    <p id="prompt-text">"Sauti-AI is connecting Africa, one voice note at a time. Let's build this together."</p>
+                </div>
+
+                <div class="record-interface">
+                    <button id="main-record-btn" class="record-circle">
+                        <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                    </button>
+                    <div class="wave-container" id="wave-visualizer">
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                        <span class="stroke"></span>
+                    </div>
+                    <p id="status-text">Click to start recording</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="view-prototype" class="app-view">
+        <div class="proto-wrapper">
+            <div class="proto-layout">
+                
+                <div class="proto-left-panel">
+                    <h2>Test Prototype</h2>
+                    <p>Speak to Sauti-AI naturally. The conversational engine will respond using a natural native accent model.</p>
+                    
+                    <select class="prototype-select" id="proto-accent-select">
+                        <option value="General">Target Output: Match My Accent</option>
+                        <option value="Pidgin">Target Output: Force Pidgin Voice</option>
+                    </select>
+
+                    <div class="record-interface">
+                        <button id="proto-record-btn" class="record-circle" style="background: linear-gradient(135deg, var(--primary-neon), #00D1B2); color: #000;">
+                            <i class="fa-solid fa-microphone" id="proto-mic-icon"></i>
+                        </button>
+                        <div class="wave-container" id="proto-wave-visualizer">
+                            <span class="stroke"></span>
+                            <span class="stroke"></span>
+                            <span class="stroke"></span>
+                            <span class="stroke"></span>
+                            <span class="stroke"></span>
+                        </div>
+                        <p id="proto-status-text">Tap circle to talk to AI</p>
+                    </div>
+                </div>
+
+                <div class="proto-right-panel">
+                    <div class="chat-header"><span></span> Sauti-AI Audio Context logs</div>
+                    <div class="chat-output-area" id="chat-box">
+                        <div class="bubble ai-msg">👋 Aribo! I am active. Tap the green microphone circle, say something, and let's test our live voice-reply interaction processing loop.</div>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </section>
+    </div>
 
     <footer>
         <p>&copy; 2026 Sauti-AI. Built for scaling African speech datasets.</p>
@@ -513,54 +622,122 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // View Navigation Selectors
+            const viewLanding = document.getElementById('view-landing');
+            const viewPrototype = document.getElementById('view-prototype');
+            const linkLanding = document.getElementById('link-landing');
+            const linkProtoBtn = document.getElementById('link-proto-btn');
+            const navLogo = document.getElementById('nav-logo');
+            const heroToProto = document.getElementById('hero-to-proto');
+
+            // Routing helper function
+            function switchView(targetView) {
+                document.querySelectorAll('.app-view').forEach(view => {
+                    view.classList.remove('active-view');
+                });
+                if(targetView === 'landing') {
+                    viewLanding.classList.add('active-view');
+                    window.scrollTo(0,0);
+                } else if(targetView === 'prototype') {
+                    viewPrototype.classList.add('active-view');
+                    window.scrollTo(0,0);
+                }
+            }
+
+            // Route Triggers
+            linkLanding.addEventListener('click', (e) => { e.preventDefault(); switchView('landing'); });
+            navLogo.addEventListener('click', () => switchView('landing'));
+            linkProtoBtn.addEventListener('click', (e) => { e.preventDefault(); switchView('prototype'); });
+            heroToProto.addEventListener('click', () => switchView('prototype'));
+
+            // --- DESIGN 1 JS: VOICE COLLECTION DRIVE LOOP ---
             const recordBtn = document.getElementById('main-record-btn');
             const micIcon = document.getElementById('mic-icon');
             const statusText = document.getElementById('status-text');
             const waveVisualizer = document.getElementById('wave-visualizer');
             const accentSelect = document.getElementById('accent-select');
 
-            let isRecording = false;
+            let isRecordingDrive = false;
 
             recordBtn.addEventListener('click', () => {
-                // Validation check
                 if (accentSelect.value === "") {
                     statusText.style.color = "#ff3333";
                     statusText.textContent = "Please select an accent before recording!";
                     accentSelect.focus();
                     return;
                 }
-
-                // Reset color if validation passed
                 statusText.style.color = "var(--text-muted)";
 
-                if (!isRecording) {
-                    // Start State Animation
-                    isRecording = true;
+                if (!isRecordingDrive) {
+                    isRecordingDrive = true;
                     recordBtn.classList.add('recording');
-                    micIcon.className = "fa-solid fa-square"; // Change to stop square icon
-                    statusText.textContent = "Recording your voice... Click again to finish.";
+                    micIcon.className = "fa-solid fa-square";
+                    statusText.textContent = "Recording your voice prompt chunk...";
                     waveVisualizer.classList.add('active');
-                    
-                    console.log(`Recording started for target accent: ${accentSelect.value}`);
-                    
                 } else {
-                    // Stop State Animation
-                    isRecording = false;
+                    isRecordingDrive = false;
                     recordBtn.classList.remove('recording');
-                    micIcon.className = "fa-solid fa-microphone"; // Switch back to original icon
-                    statusText.textContent = "Processing audio chunk...";
+                    micIcon.className = "fa-solid fa-microphone";
+                    statusText.textContent = "Uploading to Sauti dataset storage...";
                     waveVisualizer.classList.remove('active');
 
-                    // Simulated success feedback
+                    // Sauti Hook Strategy: Successful collection triggers a redirect to test the live prototype!
                     setTimeout(() => {
                         statusText.style.color = "var(--primary-neon)";
-                        statusText.textContent = "Successfully uploaded! Thank you.";
+                        statusText.textContent = "Uploaded! Redirecting you to test our AI reply model...";
                         
                         setTimeout(() => {
+                            // Automatically route user to page 2 prototype
+                            switchView('prototype');
+                            // Reset state string silently
                             statusText.style.color = "var(--text-muted)";
-                            statusText.textContent = "Click to start recording another prompt";
-                        }, 3000);
+                            statusText.textContent = "Click to start recording";
+                        }, 2000);
                     }, 1200);
+                }
+            });
+
+            // --- DESIGN 2 JS: PROTOTYPE CONVERSATIONAL PLAYGROUND ENGINE ---
+            const protoRecordBtn = document.getElementById('proto-record-btn');
+            const protoMicIcon = document.getElementById('proto-mic-icon');
+            const protoStatusText = document.getElementById('proto-status-text');
+            const protoWaveVisualizer = document.getElementById('proto-wave-visualizer');
+            const chatBox = document.getElementById('chat-box');
+
+            let isRecordingProto = false;
+
+            protoRecordBtn.addEventListener('click', () => {
+                if(!isRecordingProto) {
+                    isRecordingProto = true;
+                    protoRecordBtn.classList.add('recording');
+                    protoMicIcon.className = "fa-solid fa-square";
+                    protoStatusText.textContent = "Listening to you... Tap again to send.";
+                    protoWaveVisualizer.classList.add('active');
+                } else {
+                    isRecordingProto = false;
+                    protoRecordBtn.classList.remove('recording');
+                    protoMicIcon.className = "fa-solid fa-microphone";
+                    protoStatusText.textContent = "Thinking...";
+                    protoWaveVisualizer.classList.remove('active');
+
+                    // Simulate appending user query to chat log mirror
+                    const userMessage = document.createElement('div');
+                    userMessage.className = "bubble user-msg";
+                    userMessage.innerHTML = `🎙️ <em>Audio Input (${accentSelect.value || 'General Accent'})</em>`;
+                    chatBox.appendChild(userMessage);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+
+                    // Simulated interactive voice-reply engine delay
+                    setTimeout(() => {
+                        protoStatusText.textContent = "Tap circle to talk to AI";
+                        
+                        const aiMessage = document.createElement('div');
+                        aiMessage.className = "bubble ai-msg";
+                        aiMessage.innerHTML = `🤖 <strong>Sauti AI Response:</strong> I completely understand that accent variant! Running accent translation matrix... your live vocal output rendering sounds clean and natural.`;
+                        
+                        chatBox.appendChild(aiMessage);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 1500);
                 }
             });
         });
