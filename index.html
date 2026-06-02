@@ -707,3 +707,108 @@
                                 statusText.textContent = "Successfully uploaded! Thank you for contributing.";
                             } catch (err) {
                                 statusText.style.color =
+
+
+                                    // --- DESIGN 2 HARDWARE LOGIC: PROTOTYPE VOICE-TO-VOICE PLAYGROUND ---
+            const protoRecordBtn = document.getElementById('proto-record-btn');
+            const protoMicIcon = document.getElementById('proto-mic-icon');
+            const protoStatusText = document.getElementById('proto-status-text');
+            const protoWaveVisualizer = document.getElementById('proto-wave-visualizer');
+            const protoAccentSelect = document.getElementById('proto-accent-select');
+            const chatBox = document.getElementById('chat-box');
+
+            let isRecordingProto = false;
+            let mediaRecorderProto = null;
+            let protoChunks = [];
+
+            protoRecordBtn.addEventListener('click', async () => {
+                if(!isRecordingProto) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        protoChunks = [];
+                        mediaRecorderProto = new MediaRecorder(stream);
+
+                        mediaRecorderProto.ondataavailable = (e) => {
+                            if (e.data.size > 0) protoChunks.push(e.data);
+                        };
+
+                        mediaRecorderProto.onstop = async () => {
+                            const audioBlob = new Blob(protoChunks, { type: 'audio/wav' });
+                            protoStatusText.textContent = "Thinking...";
+
+                            // FIXED: Changed accentSelect.value to protoAccentSelect.value 
+                            const selectedAccent = protoAccentSelect.value || 'General';
+
+                            // Append real user dialogue feedback component visually
+                            const userMessage = document.createElement('div');
+                            userMessage.className = "bubble user-msg";
+                            userMessage.innerHTML = `🎙️ <em>Sent Voice Clip (${selectedAccent})</em>`;
+                            chatBox.appendChild(userMessage);
+                            chatBox.scrollTop = chatBox.scrollHeight;
+
+                            // Form compilation block mapping directly to FastAPI fields
+                            const formData = new FormData();
+                            formData.append("target_accent", selectedAccent);
+                            formData.append("user_audio", audioBlob, "playground_mic.wav");
+
+                            try {
+                                const response = await fetch(`${BACKEND_URL}/api/interact`, {
+                                    method: "POST",
+                                    body: formData
+                                });
+
+                                if (!response.ok) throw new Error("Pipeline drop");
+
+                                const data = await response.json();
+
+                                // Render the response text transcript block
+                                const aiMessage = document.createElement('div');
+                                aiMessage.className = "bubble ai-msg";
+                                aiMessage.innerHTML = `🤖 <strong>Sauti AI Response:</strong> ${data.ai_text_log}`;
+                                chatBox.appendChild(aiMessage);
+                                chatBox.scrollTop = chatBox.scrollHeight;
+
+                                // SOUND RESPONSE COUPLING LAYER
+                                if(data.ai_audio_reply_url) {
+                                    const audioReply = new Audio();
+                                    audioReply.src = data.ai_audio_reply_url;
+                                    audioReply.crossOrigin = "anonymous";
+                                    await audioReply.play();
+                                }
+
+                            } catch (err) {
+                                console.error("Pipeline routing dropped:", err);
+                                const errorMessage = document.createElement('div');
+                                errorMessage.className = "bubble ai-msg";
+                                errorMessage.style.borderLeftColor = "#ff3333";
+                                errorMessage.innerHTML = `❌ <strong>System Error:</strong> Connection to local Python server dropped.`;
+                                chatBox.appendChild(errorMessage);
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            }
+
+                            protoStatusText.textContent = "Tap circle to talk to AI";
+                        };
+
+                        mediaRecorderProto.start();
+                        isRecordingProto = true;
+                        protoRecordBtn.classList.add('recording');
+                        protoMicIcon.className = "fa-solid fa-square";
+                        protoStatusText.textContent = "Listening to you... Tap again to send.";
+                        protoWaveVisualizer.classList.add('active');
+
+                    } catch (err) {
+                        console.error("Mic error:", err);
+                        protoStatusText.textContent = "Mic hardware unavailable or blocked.";
+                    }
+                } else {
+                    if (mediaRecorderProto && mediaRecorderProto.state !== "inactive") {
+                        mediaRecorderProto.stop();
+                        // Safely kill the hardware stream tracks right away
+                        mediaRecorderProto.stream.getTracks().forEach(track => track.stop());
+                    }
+                    isRecordingProto = false;
+                    protoRecordBtn.classList.remove('recording');
+                    protoMicIcon.className = "fa-solid fa-microphone";
+                    protoWaveVisualizer.classList.remove('active');
+                }
+            });
