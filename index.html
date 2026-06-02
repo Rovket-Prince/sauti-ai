@@ -706,10 +706,37 @@
                                 statusText.style.color = "var(--primary-neon)";
                                 statusText.textContent = "Successfully uploaded! Thank you for contributing.";
                             } catch (err) {
-                                statusText.style.color =
+                                console.error("Upload error:", err);
+                                statusText.style.color = "#ff3333";
+                                statusText.textContent = "Network drop. Ensure FastAPI server is running.";
+                            }
+                        };
 
+                        mediaRecorderDrive.start();
+                        isRecordingDrive = true;
+                        recordBtn.classList.add('recording');
+                        micIcon.className = "fa-solid fa-square";
+                        statusText.textContent = "Recording... Click again to stop.";
+                        waveVisualizer.classList.add('active');
 
-                                    // --- DESIGN 2 HARDWARE LOGIC: PROTOTYPE VOICE-TO-VOICE PLAYGROUND ---
+                    } catch (err) {
+                        console.error("Mic error:", err);
+                        statusText.style.color = "#ff3333";
+                        statusText.textContent = "Mic hardware unavailable or blocked.";
+                    }
+                } else {
+                    if (mediaRecorderDrive && mediaRecorderDrive.state !== "inactive") {
+                        mediaRecorderDrive.stop();
+                        mediaRecorderDrive.stream.getTracks().forEach(track => track.stop());
+                    }
+                    isRecordingDrive = false;
+                    recordBtn.classList.remove('recording');
+                    micIcon.className = "fa-solid fa-microphone";
+                    waveVisualizer.classList.remove('active');
+                }
+            });
+
+            // --- DESIGN 2 HARDWARE LOGIC: PROTOTYPE VOICE-TO-VOICE PLAYGROUND ---
             const protoRecordBtn = document.getElementById('proto-record-btn');
             const protoMicIcon = document.getElementById('proto-mic-icon');
             const protoStatusText = document.getElementById('proto-status-text');
@@ -736,7 +763,6 @@
                             const audioBlob = new Blob(protoChunks, { type: 'audio/wav' });
                             protoStatusText.textContent = "Thinking...";
 
-                            // FIXED: Changed accentSelect.value to protoAccentSelect.value 
                             const selectedAccent = protoAccentSelect.value || 'General';
 
                             // Append real user dialogue feedback component visually
@@ -812,3 +838,7 @@
                     protoWaveVisualizer.classList.remove('active');
                 }
             });
+        });
+    </script>
+</body>
+</html>
