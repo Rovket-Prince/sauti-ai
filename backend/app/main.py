@@ -14,7 +14,11 @@ app = FastAPI(
 # This allows your Vercel-deployed frontend website to hit your backend API securely.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, change this to your specific frontend URL
+   allow_origins=[
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "https://sauti-ai-five.vercel.app/" # <-- Put your exact live Vercel URL here!
+]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
