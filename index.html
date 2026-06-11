@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sauti-AI | Empowering African Voices</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Color Palette & Custom Variables */
         :root {
@@ -800,28 +800,37 @@
                         };
 
                         mediaRecorderDrive.onstop = async () => {
-                            const audioBlob = new Blob(driveChunks, { type: 'audio/wav' });
-                            statusText.textContent = "Uploading asset to Sauti dataset storage...";
-                            
-                            const formData = new FormData();
-                            formData.append("accent", accentSelect.value);
-                            formData.append("transcript", promptText.innerText);
-                            formData.append("audio_file", audioBlob, "contribution.wav");
+    const audioBlob = new Blob(driveChunks, { type: 'audio/wav' });
+    
+    // Exact text matching your design update request
+    statusText.style.color = "var(--text-muted)";
+    statusText.textContent = "Uploading asset to Sauti dataset storage...";
+    
+    // Generate a unique file path template using timestamp and chosen dialect
+    const cleanAccent = accentSelect.value.replace(/\s+/g, '_').toLowerCase();
+    const uniqueFileName = `${cleanAccent}_${Date.now()}.wav`;
 
-                            try {
-                                const res = await fetch(`${BACKEND_URL}/api/upload-dataset`, {
-                                    method: "POST",
-                                    body: formData
-                                });
-                                if(!res.ok) throw new Error("Upload Failed");
-                                
-                                statusText.style.color = "var(--primary-neon)";
-                                statusText.textContent = "Successfully uploaded! Thank you for contributing.";
-                            } catch (err) {
-                                console.error("Upload error:", err);
-                                statusText.style.color = "#ff3333";
-                                statusText.textContent = "Network drop. Ensure FastAPI server is running.";
-                            }
+    try {
+        // 2. Direct upload sequence bypasses the backend wrapper completely
+        const { data, error } = await supabaseClient.storage
+            .from('sauti-audio') // Replace with your exact storage bucket name
+            .upload(uniqueFileName, audioBlob, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: 'audio/wav'
+            });
+
+        if (error) throw error;
+        
+        // 3. Execution update complete confirmation
+        statusText.style.color = "var(--primary-neon)";
+        statusText.textContent = "audio successfully uploaded";
+        
+    } catch (err) {
+        console.error("Supabase Storage Error:", err.message || err);
+        statusText.style.color = "#ff3333";
+        statusText.textContent = "Upload failed. Check your network or RLS policies.";
+    }
                         };
 
                         mediaRecorderDrive.start();
