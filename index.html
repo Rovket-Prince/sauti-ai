@@ -722,7 +722,12 @@
 
     <script>
         const BACKEND_URL = "https://sauti-ai-backend.onrender.com";
-
+        
+// 1. Define these outside/above everything else so they are globally accessible!
+    const SUPABASE_URL = "https://mpgdfrqgpzautjcnpkmn.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wZ2RmcnFncHphdXRqY25wa21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NTQ1OTksImV4cCI6MjA5NTAzMDU5OX0.uklNz9K-qDZPozsUKMy9c7LBXveGPQVNUP3jO2yAzyw"; // Ensure your real key is here
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         document.addEventListener('DOMContentLoaded', () => {
             const viewLanding = document.getElementById('view-landing');
             const viewPrototype = document.getElementById('view-prototype');
