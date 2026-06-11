@@ -813,7 +813,7 @@
     try {
         // 2. Direct upload sequence bypasses the backend wrapper completely
         const { data, error } = await supabaseClient.storage
-            .from('sauti-audio') // Replace with your exact storage bucket name
+            .from('Recordings') // Replace with your exact storage bucket name
             .upload(uniqueFileName, audioBlob, {
                 cacheControl: '3600',
                 upsert: false,
